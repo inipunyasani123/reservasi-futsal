@@ -1,4 +1,4 @@
-const URL = 'https://reservasi-futsal.vercel.app';
+const URL = 'https://reservasi-futsal.pintuweb.id';
 
 export default function sitemap() {
   const now = new Date();

@@ -2,7 +2,7 @@
 
 Tiga lapangan futsal indoor (fiktif). Paradigma **grid waktu**: jam × lapangan, pilih sampai empat jam sekaligus dengan harga di tiap kotak.
 
-**Demo live:** https://reservasi-futsal.vercel.app
+**Demo live:** https://reservasi-futsal.pintuweb.id
 
 ![Tangkapan layar](public/og.jpg)
 

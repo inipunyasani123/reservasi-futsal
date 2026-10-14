@@ -5,10 +5,10 @@ import Kaki from '@/components/Kaki';
 
 const outfit = Outfit({ subsets: ['latin'], variable: '--font-outfit', display: 'swap' });
 
-const __jsonld = {"@context":"https://schema.org","@type":"WebSite","name":"Gelanggang Petang","description":"Booking lapangan futsal lewat grid jam × lapangan: harga sore, jam emas, dan malam terlihat di tiap kotak. Plus papan cari lawan untuk sparring.","url":"https://reservasi-futsal.vercel.app","inLanguage":"id"};
+const __jsonld = {"@context":"https://schema.org","@type":"WebSite","name":"Gelanggang Petang","description":"Booking lapangan futsal lewat grid jam × lapangan: harga sore, jam emas, dan malam terlihat di tiap kotak. Plus papan cari lawan untuk sparring.","url":"https://reservasi-futsal.pintuweb.id","inLanguage":"id"};
 
 export const metadata = {
-  metadataBase: new URL("https://reservasi-futsal.vercel.app"),
+  metadataBase: new URL("https://reservasi-futsal.pintuweb.id"),
   title: { default: "Gelanggang Petang — Booking lapangan futsal", template: "%s — Gelanggang Petang" },
   description: "Booking lapangan futsal lewat grid jam × lapangan: harga sore, jam emas, dan malam terlihat di tiap kotak. Plus papan cari lawan untuk sparring.",
   applicationName: "Gelanggang Petang",
@@ -16,11 +16,11 @@ export const metadata = {
   authors: [{ name: "Gelanggang Petang" }],
   creator: "Gelanggang Petang",
   publisher: "Gelanggang Petang",
-  alternates: { canonical: "https://reservasi-futsal.vercel.app" },
+  alternates: { canonical: "https://reservasi-futsal.pintuweb.id" },
   openGraph: {
     type: "website",
     locale: "id_ID",
-    url: "https://reservasi-futsal.vercel.app",
+    url: "https://reservasi-futsal.pintuweb.id",
     siteName: "Gelanggang Petang",
     title: "Gelanggang Petang — Booking lapangan futsal",
     description: "Booking lapangan futsal lewat grid jam × lapangan: harga sore, jam emas, dan malam terlihat di tiap kotak. Plus papan cari lawan untuk sparring.",
