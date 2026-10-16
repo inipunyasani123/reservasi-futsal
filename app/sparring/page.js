@@ -1,10 +1,11 @@
 import PapanSparring from '@/components/PapanSparring';
+import { halaman } from '@/lib/seo';
 
-export const metadata = {
-  title: 'Cari lawan',
-  description: 'Papan sparring Gelanggang Petang: tim yang mencari lawan minggu ini, disaring menurut level — santai, menengah, atau kompetitif.',
-  alternates: { canonical: '/sparring' },
-};
+export const metadata = halaman({
+  judul: 'Cari lawan sparring',
+  deskripsi: 'Papan sparring Gelanggang Petang: tim yang mencari lawan minggu ini, disaring menurut level santai, menengah, atau kompetitif. Pasang timmu sendiri.',
+  path: '/sparring',
+});
 
 export default function SparringPage() {
   return (

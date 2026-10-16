@@ -1,11 +1,11 @@
 'use client';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Check, User, Phone, X, Sun, Moon, Flame } from 'lucide-react';
+import { Check, User, Phone, X, Sun, Moon, Flame, ArrowDown } from 'lucide-react';
 import { arena, courts, hours, hargaSlot, golonganJam, terisiContoh } from '@/lib/data';
 import { useLocalStorage } from '@/lib/useLocalStorage';
 import { useHariIni } from '@/lib/useHariIni';
+import { useDialog } from '@/lib/useDialog';
 import { tambahHari, hariKe, fmtTanggal, sudahLewat, rupiah, kodePesan } from '@/lib/waktu';
 
 const key = (c, h) => `${c}-${h}`;
@@ -19,6 +19,24 @@ export default function FutsalApp() {
   const [picked, setPicked] = useState([]);
   const [form, setForm] = useState({ name: '', phone: '' });
   const [done, setDone] = useState(null);
+  const dialog = useDialog(!!done, () => setDone(null));
+  // Bilah ringkasan di ponsel tampil selama formulir belum terlihat di layar.
+  const formRef = useRef(null);
+  const [formTerlihat, setFormTerlihat] = useState(false);
+  const adaPilihan = picked.length > 0;
+  useEffect(() => {
+    const el = formRef.current;
+    if (!el || !('IntersectionObserver' in window)) return;
+    const io = new IntersectionObserver(([e]) => setFormTerlihat(e.isIntersecting), { threshold: 0.2 });
+    io.observe(el);
+    return () => io.disconnect();
+  }, [adaPilihan]);
+  const keFormulir = () => {
+    const el = formRef.current;
+    if (!el) return;
+    el.scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
+    el.querySelector('input')?.focus({ preventScroll: true });
+  };
 
   const lewat = (d, h) => (sekarang ? sudahLewat(d, h, 10, sekarang) : true);
   const hariPil = useMemo(() => (hari ? Array.from({ length: 7 }, (_, i) => tambahHari(hari, i)) : []), [hari]);
@@ -55,7 +73,7 @@ export default function FutsalApp() {
   };
 
   return (
-    <div className="pb-10">
+    <div className={adaPilihan && !formTerlihat ? 'pb-24 sm:pb-10' : 'pb-10'}>
       <main className="mx-auto max-w-4xl px-5 py-6">
         <div className="mb-6 grid gap-3 sm:grid-cols-[1.4fr_1fr]">
           <div className="rounded-2xl border border-slate-700 bg-gradient-to-r from-slate-900 via-slate-800 to-lime-950 p-5">
@@ -69,15 +87,24 @@ export default function FutsalApp() {
         </div>
 
         <div className="mb-4 flex flex-col gap-3">
-          <h2 className="text-lg font-bold">Tanggal{date && <span className="font-normal text-slate-300"> · {fmtTanggal(date)}</span>}</h2>
-          {!hari ? <p className="text-sm text-slate-300">Memuat tanggal…</p> : (
-            <div className="relative flex gap-2 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          <h2 className="text-lg font-bold">Tanggal{date && <span className="font-normal text-slate-300"> · {date === hari ? 'hari ini, ' : date === hariPil[1] ? 'besok, ' : ''}{fmtTanggal(date)}</span>}</h2>
+          {/* Kerangka seukuran isi aslinya: tanggal WIB baru diketahui di peramban, jadi tata letak tidak bergeser. */}
+          {!hari ? (
+            <div className="grid grid-cols-7 gap-1.5 sm:flex sm:gap-2" role="status">
+              <span className="sr-only">Memuat tanggal…</span>
+              {Array.from({ length: 7 }, (_, i) => <span key={i} className="h-[3.75rem] rounded-lg border-2 border-slate-800 bg-slate-800/60 sm:w-[4.5rem]" aria-hidden="true" />)}
+            </div>
+          ) : (
+            <div className="grid grid-cols-7 gap-1.5 sm:flex sm:gap-2">
               {hariPil.map((d, i) => {
                 const active = date === d; const habis = hours.every((h) => lewat(d, h));
                 return (
                   <button key={d} type="button" disabled={habis} onClick={() => { setDate(d); setPicked([]); }} aria-pressed={active}
-                    className={`shrink-0 rounded-lg border-2 px-4 py-2 text-sm font-bold transition disabled:cursor-not-allowed disabled:opacity-50 ${active ? 'border-lime-400 bg-lime-400/10 text-lime-300' : 'border-slate-700 bg-slate-800 text-slate-100 hover:border-lime-400/50'}`}>
-                    {i === 0 ? 'Hari ini' : i === 1 ? 'Besok' : HARI[hariKe(d)]} <span className="font-normal">{Number(d.slice(8))}</span>
+                    className={`flex h-[3.75rem] flex-col items-center justify-center rounded-lg border-2 px-0.5 py-1 transition disabled:cursor-not-allowed disabled:opacity-50 sm:min-w-[4.5rem] sm:px-3 ${active ? 'border-lime-400 bg-lime-400/10 text-lime-300' : 'border-slate-700 bg-slate-800 text-slate-100 hover:border-lime-400/50'}`}>
+                    <span className="text-[11px] font-bold uppercase tracking-wide">{HARI[hariKe(d)]}</span>{' '}
+                    <span className="text-lg font-extrabold leading-tight">{Number(d.slice(8))}</span>
+                    <span className="sr-only"> {fmtTanggal(d, { month: 'long' })}{i === 0 ? ', hari ini' : i === 1 ? ', besok' : ''}{habis ? ', semua jam sudah lewat' : ''}</span>
+                    {i === 0 && <span className="mt-0.5 h-1 w-1 rounded-full bg-current" aria-hidden="true" />}
                   </button>
                 );
               })}
@@ -92,16 +119,16 @@ export default function FutsalApp() {
           <span className="flex items-center gap-1.5"><Flame size={14} className="text-amber-300" aria-hidden="true" /> Jam emas</span>
         </div>
 
-        <div className="relative overflow-x-auto rounded-2xl border border-slate-700 bg-[#0f1a2e]">
-          <table className="w-full min-w-[560px] border-collapse text-center">
+        <div className="overflow-hidden rounded-2xl border border-slate-700 bg-[#0f1a2e]">
+          <table className="w-full table-fixed border-collapse text-center">
             <caption className="sr-only">Jadwal lapangan {date ? fmtTanggal(date) : ''}</caption>
             <thead>
               <tr className="border-b border-slate-700">
-                <th scope="col" className="w-24 border-r border-slate-700 py-3 text-xs font-bold text-slate-300">JAM</th>
+                <th scope="col" className="w-[4.25rem] border-r border-slate-700 py-3 text-[11px] font-bold text-slate-300 sm:w-24 sm:text-xs">JAM</th>
                 {courts.map((c) => (
-                  <th key={c.id} scope="col" className="border-r border-slate-700 py-2 last:border-r-0">
-                    <span className="block text-sm font-bold">{c.name}</span>
-                    <span className="block text-[11px] font-normal text-slate-300">{c.type}</span>
+                  <th key={c.id} scope="col" className="border-r border-slate-700 px-1 py-2 last:border-r-0">
+                    <span className="block text-[13px] font-bold sm:text-sm">{c.name}</span>
+                    <span className="block text-[11px] font-normal leading-tight text-slate-300">{c.type}</span>
                   </th>
                 ))}
               </tr>
@@ -111,8 +138,8 @@ export default function FutsalApp() {
                 const Ikon = IKON[golonganJam(h)];
                 return (
                   <tr key={h} className="border-b border-slate-700/60 last:border-b-0">
-                    <th scope="row" className="border-r border-slate-700 py-3 font-mono text-base font-bold text-slate-200">
-                      <span className="inline-flex items-center gap-1.5">{h}<Ikon size={13} className={golonganJam(h) === 'emas' ? 'text-amber-300' : 'text-slate-400'} aria-hidden="true" /></span>
+                    <th scope="row" className="border-r border-slate-700 py-3 font-mono text-sm font-bold text-slate-200 sm:text-base">
+                      <span className="inline-flex items-center gap-1 sm:gap-1.5">{h}<Ikon size={13} className={golonganJam(h) === 'emas' ? 'text-amber-300' : 'text-slate-400'} aria-hidden="true" /></span>
                     </th>
                     {courts.map((c) => {
                       const k = key(c.id, h); const habis = !date || lewat(date, h); const booked = bookedSet.has(k); const sel = picked.includes(k);
@@ -120,14 +147,14 @@ export default function FutsalApp() {
                       return (
                         <td key={k} className="border-r border-slate-800 p-0 last:border-r-0">
                           <button type="button" disabled={off || (penuh && !sel)} onClick={() => toggle(c.id, h)} aria-pressed={sel}
-                            aria-label={`${c.name} jam ${h}${booked ? ', terisi' : habis ? ', sudah lewat' : `, ${rupiah(hargaSlot(date, h))}`}`}
-                            className={`h-full w-full py-3 text-xs font-bold transition ${
+                            className={`h-full min-h-11 w-full py-3 text-xs font-bold transition ${
                               sel ? 'bg-lime-400/15 text-lime-300 shadow-[inset_0_0_0_2px_#84cc16]'
                               : off ? 'cursor-not-allowed bg-[#0f172a] text-slate-500'
                               : penuh ? 'cursor-not-allowed bg-slate-800/40 text-slate-400'
                               : 'bg-slate-800/40 text-slate-200 hover:bg-lime-400/10 hover:text-lime-300'
                             }`}>
-                            {booked ? 'Terisi' : habis ? '—' : sel ? 'Dipilih' : `${Math.round(hargaSlot(date, h) / 1000)}rb`}
+                            <span className="sr-only">{c.name} pukul {h}, </span>
+                            {booked ? 'Terisi' : habis ? <><span aria-hidden="true">—</span><span className="sr-only">sudah lewat</span></> : sel ? 'Dipilih' : `${Math.round(hargaSlot(date, h) / 1000)}rb`}
                           </button>
                         </td>
                       );
@@ -140,13 +167,12 @@ export default function FutsalApp() {
         </div>
         {penuh && <p className="mt-2 text-sm text-amber-200">Maksimal {arena.maksSlot} jam per booking. Hapus salah satu untuk memilih jam lain.</p>}
 
-        <AnimatePresence>
-          {picked.length > 0 && (
-            <motion.form initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} onSubmit={confirm} className="mt-6 rounded-2xl border border-slate-700 bg-slate-900/70 p-6">
-              <div className="flex items-center justify-between"><h2 className="font-bold">Slot dipilih ({picked.length})</h2><span className="font-bold text-lime-300">{rupiah(total)}</span></div>
+        {picked.length > 0 && (
+            <form ref={formRef} onSubmit={confirm} aria-labelledby="h-slot" className="anim-naik mt-6 scroll-mt-24 rounded-2xl border border-slate-700 bg-slate-900/70 p-5 sm:p-6">
+              <div className="flex items-center justify-between"><h2 id="h-slot" className="font-bold">Slot dipilih ({picked.length})</h2><span className="font-bold text-lime-300">{rupiah(total)}</span></div>
               <ul className="mt-3 flex flex-wrap gap-2">
                 {[...picked].sort().map((k) => { const [c, h] = k.split('-'); return (
-                  <li key={k} className="inline-flex items-center gap-1.5 rounded-full bg-slate-800 px-3 py-1 text-xs font-semibold text-slate-100">Lap {c} · {h} · {rupiah(hargaSlot(date, h))}<button type="button" onClick={() => setPicked((p) => p.filter((x) => x !== k))} aria-label={`Hapus lapangan ${c} jam ${h}`} className="text-slate-300 hover:text-rose-300"><X size={12} /></button></li>
+                  <li key={k} className="inline-flex items-center gap-1.5 rounded-full bg-slate-800 px-3 py-1 text-xs font-semibold text-slate-100">Lap {c} · {h} · {rupiah(hargaSlot(date, h))}<button type="button" onClick={() => setPicked((p) => p.filter((x) => x !== k))} aria-label={`Hapus lapangan ${c} jam ${h}`} className="-my-1 -mr-2 grid h-7 w-7 place-items-center rounded-full text-slate-300 hover:bg-slate-700 hover:text-rose-300"><X size={13} /></button></li>
                 ); })}
               </ul>
               <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -155,15 +181,22 @@ export default function FutsalApp() {
               </div>
               <button type="submit" className="mt-5 w-full rounded-xl bg-lime-400 py-3.5 text-sm font-bold text-slate-900 transition hover:bg-lime-300">Simpan booking · {rupiah(total)}</button>
               <p className="mt-2 text-center text-xs text-slate-300">Purwarupa: tidak ada pembayaran. Booking disimpan di peramban ini.</p>
-            </motion.form>
-          )}
-        </AnimatePresence>
+            </form>
+        )}
       </main>
 
-      <AnimatePresence>
-        {done && (
-          <motion.div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-5" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setDone(null)}>
-            <motion.div role="dialog" aria-modal="true" aria-labelledby="judul-selesai" initial={{ scale: 0.9, y: 10 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.95, opacity: 0 }} onClick={(e) => e.stopPropagation()} className="w-full max-w-sm rounded-2xl border border-slate-700 bg-slate-900 p-7 text-center">
+      {adaPilihan && !formTerlihat && (
+        <div className="anim-bawah fixed inset-x-0 bottom-0 z-30 border-t border-slate-700 bg-[#0b1220]/95 px-5 py-3 backdrop-blur sm:hidden">
+          <div className="mx-auto flex max-w-4xl items-center justify-between gap-3">
+            <p className="text-sm"><span className="font-bold text-slate-100">{picked.length} slot</span> <span className="text-slate-300">·</span> <span className="font-bold text-lime-300">{rupiah(total)}</span></p>
+            <button type="button" onClick={keFormulir} className="inline-flex min-h-11 items-center gap-1.5 rounded-xl bg-lime-400 px-4 text-sm font-bold text-slate-900">Isi data <ArrowDown size={15} aria-hidden="true" /></button>
+          </div>
+        </div>
+      )}
+
+      {done && (
+          <div className="anim-pudar fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-5" onClick={() => setDone(null)}>
+            <div ref={dialog} tabIndex={-1} role="dialog" aria-modal="true" aria-labelledby="judul-selesai" onClick={(e) => e.stopPropagation()} className="anim-skala w-full max-w-sm rounded-2xl border border-slate-700 bg-slate-900 p-7 text-center outline-none">
               <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-lime-400 text-slate-900"><Check size={28} /></div>
               <h2 id="judul-selesai" className="mt-4 text-2xl font-bold">Booking tersimpan</h2>
               <p className="mt-1 text-sm text-slate-300">Kode <span className="font-mono font-semibold text-slate-100">{done.kode}</span> · {done.name}</p>
@@ -177,10 +210,9 @@ export default function FutsalApp() {
                 <Link href="/jadwal-saya" className="rounded-xl bg-lime-400 py-3 text-sm font-bold text-slate-900 hover:bg-lime-300">Jadwal saya</Link>
                 <button type="button" onClick={() => setDone(null)} className="rounded-xl border border-slate-600 py-3 text-sm font-semibold text-slate-100 hover:bg-slate-800">Tutup</button>
               </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+            </div>
+          </div>
+      )}
     </div>
   );
 }

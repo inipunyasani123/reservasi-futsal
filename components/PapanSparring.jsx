@@ -70,7 +70,7 @@ export default function PapanSparring() {
             <p className="mt-1 text-sm text-lime-300">{fmtTanggal(s.tanggal, { weekday: 'long', day: 'numeric', month: 'short' })} · {s.jam} · Lapangan {s.lapangan}</p>
             {s.catatan && <p className="mt-2 text-sm text-slate-300">{s.catatan}</p>}
             {s.milikku ? (
-              <button type="button" onClick={() => setPunyaku((p) => p.filter((x) => x.id !== s.id))} className="mt-4 inline-flex items-center gap-1.5 text-sm font-bold text-rose-300 hover:underline"><Trash2 size={15} aria-hidden="true" /> Hapus dari papan</button>
+              <button type="button" onClick={() => setPunyaku((p) => p.filter((x) => x.id !== s.id))} className="mt-2 inline-flex items-center gap-1.5 py-2 text-sm font-bold text-rose-300 hover:underline"><Trash2 size={15} aria-hidden="true" /> Hapus dari papan</button>
             ) : ajak === s.id ? (
               <p className="mt-4 flex items-start gap-2 text-sm text-slate-200" role="status"><Check size={16} className="mt-0.5 shrink-0 text-lime-400" aria-hidden="true" /> Tercatat. Di aplikasi sungguhan, kapten {s.tim} akan menerima ajakanmu. Purwarupa ini tidak mengirim apa pun.</p>
             ) : (

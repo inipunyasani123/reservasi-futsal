@@ -1,11 +1,12 @@
 import DaftarJadwal from '@/components/DaftarJadwal';
+import { halaman } from '@/lib/seo';
 
-export const metadata = {
-  title: 'Jadwal saya',
-  description: 'Lihat dan batalkan booking lapangan Gelanggang Petang yang tersimpan di peramban ini.',
-  alternates: { canonical: '/jadwal-saya' },
+export const metadata = halaman({
+  judul: 'Jadwal saya',
+  deskripsi: 'Lihat dan batalkan booking lapangan Gelanggang Petang yang tersimpan di peramban ini.',
+  path: '/jadwal-saya',
   robots: { index: false, follow: true },
-};
+});
 
 export default function JadwalSayaPage() {
   return (

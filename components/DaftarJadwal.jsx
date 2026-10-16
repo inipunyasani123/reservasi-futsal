@@ -55,7 +55,7 @@ export default function DaftarJadwal() {
                     <div className="text-right"><p className="font-mono text-sm font-bold text-slate-200">{g.kode}</p><p className="font-bold text-lime-300">{rupiah(g.slots.reduce((a, s) => a + (s.harga || 0), 0))}</p></div>
                   </div>
                   <ul className="mt-3 flex flex-wrap gap-2">{g.slots.map((s) => <li key={s.id} className="rounded-full bg-slate-800 px-3 py-1 text-sm font-semibold">Lap {s.courtId} · {s.hour}</li>)}</ul>
-                  <button type="button" onClick={() => hapus(g, true)} className="mt-4 inline-flex items-center gap-1.5 text-sm font-bold text-rose-300 hover:underline"><X size={15} aria-hidden="true" /> Batalkan</button>
+                  <button type="button" onClick={() => hapus(g, true)} className="mt-2 inline-flex items-center gap-1.5 py-2 text-sm font-bold text-rose-300 hover:underline"><X size={15} aria-hidden="true" /> Batalkan</button>
                 </li>
               );
             })}
@@ -69,7 +69,7 @@ export default function DaftarJadwal() {
             {lalu.map((g) => (
               <li key={g.kode} className="flex flex-wrap items-center justify-between gap-2 px-5 py-3 text-sm text-slate-300">
                 <span>{fmtTanggal(g.date, { day: 'numeric', month: 'short' })} · {g.slots.map((s) => `${s.courtId} ${s.hour}`).join(', ')}</span>
-                <button type="button" onClick={() => hapus(g, false)} className="font-bold text-slate-100 hover:underline">Hapus</button>
+                <button type="button" onClick={() => hapus(g, false)} className="-my-2 py-2 font-bold text-slate-100 hover:underline">Hapus</button>
               </li>
             ))}
           </ul>

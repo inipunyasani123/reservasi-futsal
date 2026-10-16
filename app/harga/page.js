@@ -2,12 +2,13 @@ import Link from 'next/link';
 import { Check } from 'lucide-react';
 import { TARIF, courts, aturan, fasilitas, arena } from '@/lib/data';
 import { rupiah } from '@/lib/waktu';
+import { halaman } from '@/lib/seo';
 
-export const metadata = {
-  title: 'Harga & aturan',
-  description: 'Tarif sewa lapangan futsal Gelanggang Petang per jam — sore, jam emas, dan malam, hari biasa dan akhir pekan — beserta jenis lapangan, aturan, dan fasilitas.',
-  alternates: { canonical: '/harga' },
-};
+export const metadata = halaman({
+  judul: 'Harga & aturan',
+  deskripsi: 'Tarif sewa lapangan futsal Gelanggang Petang per jam: sore, jam emas, dan malam, hari biasa dan akhir pekan, plus jenis lapangan, aturan, dan fasilitas.',
+  path: '/harga',
+});
 
 export default function HargaPage() {
   return (
@@ -15,18 +16,18 @@ export default function HargaPage() {
       <h1 className="text-3xl font-extrabold md:text-4xl">Harga & aturan</h1>
       <p className="mt-2 max-w-2xl text-slate-300">Harga per jam per lapangan, sama untuk ketiga lapangan. Akhir pekan berarti Sabtu dan Minggu.</p>
 
-      <div className="relative mt-8 overflow-x-auto rounded-2xl border border-slate-700 bg-[#0f1a2e]">
-        <table className="w-full min-w-[480px] text-left">
+      <div className="mt-8 overflow-hidden rounded-2xl border border-slate-700 bg-[#0f1a2e]">
+        <table className="w-full text-left">
           <caption className="sr-only">Tarif sewa per jam</caption>
           <thead className="border-b border-slate-700 text-sm text-slate-300">
-            <tr><th scope="col" className="px-5 py-3 font-bold">Waktu</th><th scope="col" className="px-5 py-3 font-bold">Senin–Jumat</th><th scope="col" className="px-5 py-3 font-bold">Sabtu–Minggu</th></tr>
+            <tr><th scope="col" className="px-3 py-3 font-bold sm:px-5">Waktu</th><th scope="col" className="px-3 py-3 font-bold sm:px-5">Senin–Jumat</th><th scope="col" className="px-3 py-3 font-bold sm:px-5">Sabtu–Minggu</th></tr>
           </thead>
           <tbody>
             {Object.entries(TARIF).map(([k, t]) => (
               <tr key={k} className={`border-b border-slate-800 last:border-b-0 ${k === 'emas' ? 'bg-lime-400/5' : ''}`}>
-                <th scope="row" className="px-5 py-4 font-bold text-slate-100">{t.label}</th>
-                <td className="px-5 py-4 font-mono text-lg text-slate-100">{rupiah(t.biasa)}</td>
-                <td className="px-5 py-4 font-mono text-lg text-lime-300">{rupiah(t.akhirPekan)}</td>
+                <th scope="row" className="px-3 py-4 text-sm font-bold text-slate-100 sm:px-5 sm:text-base">{t.label}</th>
+                <td className="whitespace-nowrap px-3 py-4 font-mono text-[15px] text-slate-100 sm:px-5 sm:text-lg">{rupiah(t.biasa)}</td>
+                <td className="whitespace-nowrap px-3 py-4 font-mono text-[15px] text-lime-300 sm:px-5 sm:text-lg">{rupiah(t.akhirPekan)}</td>
               </tr>
             ))}
           </tbody>
