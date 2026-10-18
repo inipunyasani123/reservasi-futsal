@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useMemo, useRef, useState } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { Check, User, Phone, X, Sun, Moon, Flame, ArrowDown } from 'lucide-react';
 import { arena, courts, hours, hargaSlot, golonganJam, terisiContoh } from '@/lib/data';
@@ -76,9 +77,12 @@ export default function FutsalApp() {
     <div className={adaPilihan && !formTerlihat ? 'pb-24 sm:pb-10' : 'pb-10'}>
       <main className="mx-auto max-w-4xl px-5 py-6">
         <div className="mb-6 grid gap-3 sm:grid-cols-[1.4fr_1fr]">
-          <div className="rounded-2xl border border-slate-700 bg-gradient-to-r from-slate-900 via-slate-800 to-lime-950 p-5">
+          {/* Foto gedung sebagai latar kartu judul. Ponsel: teks di atas, gawang terlihat di bawah kanan; layar lebar: foto di kanan. */}
+          <div className="relative isolate flex min-h-40 flex-col overflow-hidden rounded-2xl border border-slate-700 bg-[#0f1a2e] p-5 sm:min-h-36 sm:justify-center">
+            <Image src="/images/gelanggang-petang.webp" alt="" fill priority fetchPriority="high" sizes="(min-width: 640px) 520px, 100vw" className="-z-20 object-cover object-[50%_70%]" />
+            <div className="absolute inset-0 -z-10 bg-linear-to-b from-[#0b1220] via-[#0b1220]/75 to-[#0b1220]/10 sm:bg-linear-to-r sm:from-[#0b1220] sm:via-[#0b1220]/80 sm:to-[#0b1220]/0" aria-hidden="true" />
             <h1 className="text-2xl font-extrabold">Booking lapangan</h1>
-            <p className="mt-1 text-sm text-slate-300">Pilih sampai {arena.maksSlot} jam sekaligus, boleh beda lapangan. Harga tertera di tiap kotak.</p>
+            <p className="mt-1 max-w-84 text-sm text-slate-200 sm:max-w-70">Pilih sampai {arena.maksSlot} jam sekaligus, boleh beda lapangan. Harga tertera di tiap kotak.</p>
           </div>
           <Link href="/sparring" className="group rounded-2xl border border-lime-400/40 bg-lime-400/10 p-5 transition hover:bg-lime-400/15">
             <p className="text-sm font-bold text-lime-300">Belum punya lawan?</p>
