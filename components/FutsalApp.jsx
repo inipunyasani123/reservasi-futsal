@@ -105,7 +105,7 @@ export default function FutsalApp() {
                 return (
                   <button key={d} type="button" disabled={habis} onClick={() => { setDate(d); setPicked([]); }} aria-pressed={active}
                     className={`flex h-[3.75rem] flex-col items-center justify-center rounded-lg border-2 px-0.5 py-1 transition disabled:cursor-not-allowed disabled:opacity-50 sm:min-w-[4.5rem] sm:px-3 ${active ? 'border-lime-400 bg-lime-400/10 text-lime-300' : 'border-slate-700 bg-slate-800 text-slate-100 hover:border-lime-400/50'}`}>
-                    <span className="text-[11px] font-bold uppercase tracking-wide">{HARI[hariKe(d)]}</span>{' '}
+                    <span className="text-xs font-bold uppercase tracking-wide">{HARI[hariKe(d)]}</span>{' '}
                     <span className="text-lg font-extrabold leading-tight">{Number(d.slice(8))}</span>
                     <span className="sr-only"> {fmtTanggal(d, { month: 'long' })}{i === 0 ? ', hari ini' : i === 1 ? ', besok' : ''}{habis ? ', semua jam sudah lewat' : ''}</span>
                     {i === 0 && <span className="mt-0.5 h-1 w-1 rounded-full bg-current" aria-hidden="true" />}
@@ -128,11 +128,11 @@ export default function FutsalApp() {
             <caption className="sr-only">Jadwal lapangan {date ? fmtTanggal(date) : ''}</caption>
             <thead>
               <tr className="border-b border-slate-700">
-                <th scope="col" className="w-[4.25rem] border-r border-slate-700 py-3 text-[11px] font-bold text-slate-300 sm:w-24 sm:text-xs">JAM</th>
+                <th scope="col" className="w-[4.25rem] border-r border-slate-700 py-3 text-xs font-bold text-slate-300 sm:w-24">JAM</th>
                 {courts.map((c) => (
                   <th key={c.id} scope="col" className="border-r border-slate-700 px-1 py-2 last:border-r-0">
                     <span className="block text-[13px] font-bold sm:text-sm">{c.name}</span>
-                    <span className="block text-[11px] font-normal leading-tight text-slate-300">{c.type}</span>
+                    <span className="block text-xs font-normal leading-tight text-slate-300">{c.type}</span>
                   </th>
                 ))}
               </tr>

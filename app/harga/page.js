@@ -42,7 +42,7 @@ export default function HargaPage() {
           <li key={c.id} className="grid grid-cols-[7.5rem_1fr] overflow-hidden rounded-2xl border border-slate-700 bg-slate-900/60 sm:block">
             <div className="relative min-h-32 sm:aspect-16/10 sm:min-h-0">
               <Image src={c.foto} alt={c.fotoAlt} fill sizes="(min-width: 640px) 290px, 120px" className="object-cover" />
-              <span className="absolute left-2 top-2 rounded-md bg-[#0b1220]/85 px-1.5 py-0.5 font-mono text-[11px] font-bold tracking-wider text-lime-300 sm:left-3 sm:top-3" aria-hidden="true">LAP {c.id}</span>
+              <span className="absolute left-2 top-2 rounded-md bg-[#0b1220]/85 px-1.5 py-0.5 font-mono text-xs font-bold tracking-wider text-lime-300 sm:left-3 sm:top-3" aria-hidden="true">LAP {c.id}</span>
             </div>
             <div className="p-4 sm:p-5">
               <p className="text-lg font-bold">{c.name}</p>
